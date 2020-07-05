@@ -2,13 +2,9 @@ const express = require('express')
 const App = express()
 const constantsVariables = require('./../Constants')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
 
 App.use(bodyParser.urlencoded({ urlencoded: false }))
 App.use(bodyParser.json({}))
-
-// Connect to MongoDB database using Mongoose
-mongoose.connect('mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Handle CORS
 App.use((req, res, next) => {
@@ -26,11 +22,11 @@ App.use((req, res, next) => {
 })
 
 // Import routes
-const ProductApi = require('./../apis/routes/Product')
-const OrdersApi = require('./../apis/routes/Orders')
+const ProjectApi = require('./../apis/routes/Project')
+const OrganizationApi = require('./../apis/routes/Organization')
 
-App.use('/products', ProductApi)
-App.use('/orders', OrdersApi)
+App.use('/project', ProjectApi)
+App.use('/organization', OrganizationApi)
 
 App.use((req, res, next) => {
     const error = new Error('Not found')
