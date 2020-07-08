@@ -1,11 +1,7 @@
 const EXPRESS = require('express')
 const ROUTER = EXPRESS.Router()
 const mongo = require('mongodb').MongoClient
-const assert = require('assert')
-const mongoose = require('mongoose')
 const constants = require('./../../../Constants')
-const Project = require('./../../Models/Project')
-const Task = require('./../../Models/Task')
 const utilities = require('./../Utilities')
 require('./../Utilities')
 require('dotenv').config()
@@ -23,7 +19,7 @@ ROUTER.get('/my-tasks', (req, res, next) => {
         utilities.getDocuments('colabnova', 'tasks', identifiers)
             .then(result => {
                 res.status(constants.statusCodes.OK).json({
-                    'data': result
+                    'my-tasks': result
                 })
             })
             .catch(error => {
@@ -44,7 +40,7 @@ ROUTER.get('/my-projects', (req, res, next) => {
     utilities.getDocuments('colabnova', 'projects')
         .then(result => {
             res.status(constants.statusCodes.OK).json({
-                'data': result
+                'my-projects': result
             })
         })
         .catch(error => {
@@ -62,12 +58,12 @@ ROUTER.get('/task', (req, res, next) => {
     utilities.getDocuments('colabnova', 'tasks', identifiers)
         .then(result => {
             res.status(200).json({
-                'data': result
+                'taskDetails': result
             })
         })
         .catch(error => {
             res.status(501).json({
-                'data': error
+                'error': error
             })
         })
 })
@@ -79,14 +75,23 @@ ROUTER.get('/:projectId', (req, res, next) => {
             'projectId': req.params.projectId
         }
         utilities.getDocuments('colabnova', 'projects', identifiers)
-            .then(result => {
-                res.status(constants.statusCodes.created).json({
-                    'data': result[0]
-                })
+            .then(projectData => {
+                utilities.getDocuments('colabnova', 'tasks', identifiers)
+                    .then(tasks => {
+                        res.status(constants.statusCodes.OK).json({
+                            'projectData': projectData[0],
+                            'tasks': tasks ? tasks : []
+                        })
+                    })
+                    .catch(error => {
+                        res.status(constants.statusCodes.serverError).json({
+                            'error': error
+                        })
+                    })
             })
             .catch(error => {
                 res.status(constants.statusCodes.serverError).json({
-                    'data': error
+                    'error': error
                 })
             })
     }
@@ -115,7 +120,7 @@ ROUTER.post('/', (req, res, next) => {
         .catch(error => {
             res.status(404).json({
                 'message': 'failed',
-                'data': error
+                'error': error
             })
         })
 })
@@ -143,19 +148,19 @@ ROUTER.post('/task', (req, res, next) => {
                 utilities.insertData('colabnova', 'tasks', taskData)
                     .then(insertionResult => {
                         res.status(201).json({
-                            'data': insertionResult
+                            'message': 'success'
                         })
                     })
                     .catch(err => {
                         res.status(constants.statusCodes.serverError).json({
-                            'data': err
+                            'error': err
                         })
                     })
             })
             .catch(error => {
                 res.status(404).json({
                     'message': 'failed',
-                    'data': error
+                    'error': error
                 })
             })
     }
