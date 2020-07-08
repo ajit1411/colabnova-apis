@@ -23,9 +23,12 @@ App.use((req, res, next) => {
 
 // Import routes
 const ProjectApi = require('./../apis/routes/Project')
+const TaskApi = require('./../apis/routes/Task')
 const OrganizationApi = require('./../apis/routes/Organization')
-
+const UsersApi = require('./../apis/routes/User')
+App.use('/user', UsersApi)
 App.use('/project', ProjectApi)
+App.use('/task', TaskApi)
 App.use('/organization', OrganizationApi)
 
 App.use((req, res, next) => {
