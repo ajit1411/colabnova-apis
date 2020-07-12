@@ -2,6 +2,7 @@ const EXPRESS = require('express')
 const ROUTER = EXPRESS.Router()
 const constants = require('./../../../Constants')
 const utilities = require('./../Utilities')
+const Authorization = require('./../../../App/MiddleWare/Authorization')
 require('dotenv').config()
 
 
@@ -9,7 +10,7 @@ require('dotenv').config()
 
 
 // Get all the tasks
-ROUTER.get('/my-tasks', (req, res, next) => {
+ROUTER.get('/my-tasks', Authorization, (req, res, next) => {
     if (req.query && req.query.projectId) {
         const identifiers = {
             'projectId': req.query.projectId
@@ -34,7 +35,7 @@ ROUTER.get('/my-tasks', (req, res, next) => {
 })
 
 // Task details
-ROUTER.get('/', (req, res, next) => {
+ROUTER.get('/', Authorization, (req, res, next) => {
     const identifiers = {
         'taskId': req.query.taskId
     }
@@ -62,7 +63,7 @@ ROUTER.get('/', (req, res, next) => {
 
 
 // Add task to a project
-ROUTER.post('/new', (req, res, next) => {
+ROUTER.post('/new', Authorization, (req, res, next) => {
     if (req.body || req.body.projectId) {
         const projectId = req.body.projectId
         const taskData = {
@@ -109,7 +110,7 @@ ROUTER.post('/new', (req, res, next) => {
 
 
 // Update the task 
-ROUTER.post('/', (req, res, next) => {
+ROUTER.post('/', Authorization, (req, res, next) => {
     const updatedTaskDetails = req.body.taskDetails
     if ('_id' in updatedTaskDetails) {
         delete updatedTaskDetails['_id']

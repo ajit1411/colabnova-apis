@@ -5,13 +5,14 @@ const constants = require('./../../../Constants')
 const utilities = require('./../Utilities')
 require('./../Utilities')
 require('dotenv').config()
+const Authorization = require('./../../../App/MiddleWare/Authorization')
 const DB_HOST = 'mongodb://localhost:27017'
 
 /* ------------------------------- GET REQUESTS ------------------------------- */
 
 
 // Get all projects
-ROUTER.get('/my-projects', (req, res, next) => {
+ROUTER.get('/my-projects', Authorization, (req, res, next) => {
     utilities.getDocuments('colabnova', 'projects', {}, {})
         .then(result => {
             res.status(constants.statusCodes.OK).json({
@@ -26,7 +27,7 @@ ROUTER.get('/my-projects', (req, res, next) => {
 })
 
 // Get project details
-ROUTER.get('/:projectId', (req, res, next) => {
+ROUTER.get('/:projectId', Authorization, (req, res, next) => {
     if (req.params && req.params.projectId) {
         const identifiers = {
             'projectId': req.params.projectId
@@ -58,7 +59,7 @@ ROUTER.get('/:projectId', (req, res, next) => {
 /* ------------------------------- POST REQUESTS ------------------------------- */
 
 // Create a project
-ROUTER.post('/new', (req, res, next) => {
+ROUTER.post('/new', Authorization, (req, res, next) => {
     var project = {
         'projectId': `PROJECT_${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`,
         'name': req.body.projectName,
@@ -83,7 +84,7 @@ ROUTER.post('/new', (req, res, next) => {
 
 
 // Update the project details
-ROUTER.post('/', (req, res, next) => {
+ROUTER.post('/', Authorization, (req, res, next) => {
     const updatedProjectDetails = req.body.projectDetails
     if ('_id' in updatedProjectDetails) {
         delete updatedProjectDetails['_id']

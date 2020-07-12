@@ -6,6 +6,7 @@ const Constants = {
         unAuthorized: 401,
         notFound: 404,
         methodNotAllowed: 405,
+        resourceConflict: 409,
         serverError: 501,
         noData: 500
     }
