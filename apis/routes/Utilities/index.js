@@ -1,7 +1,7 @@
 const mongo = require('mongodb').MongoClient
 
 module.exports = {
-    getDocuments: function (databaseName, collectionName, identifiers = {}, projections = {'_id': 0}) {
+    getDocuments: function (databaseName, collectionName, identifiers = {}, projections = { '_id': 0 }) {
         return new Promise((resolve, reject) => {
             if (collectionName && databaseName) {
                 let data = {}
@@ -66,8 +66,7 @@ module.exports = {
                 })
             }
         })
-    }
-    ,
+    },
     updateDocument: function (databaseName, collectionName, identifiers, dataToUpdate) {
         return new Promise((resolve, reject) => {
             if (dataToUpdate) {
@@ -96,6 +95,38 @@ module.exports = {
                     }
                 })
             } else {
+                reject({
+                    'data': 'No data found'
+                })
+            }
+        })
+    },
+    deleteDocument: function (databaseName, collectionName, identifiers) {
+        return new Promise((resolve, reject) => {
+            if (databaseName && collectionName) {
+                mongo.connect(process.env.DB_HOST ? process.env.DB_HOST : 'mongodb://localhost:27017', (error, dbClient) => {
+                    if (error) {
+                        reject({
+                            'data': error
+                        })
+                    }
+                    else {
+                        const database = dbClient.db(databaseName)
+                        database.collection(collectionName).deleteOne(identifiers, (error, result) => {
+                            if (error) {
+                                reject(error)
+                            }
+                            else {
+                                dbClient.close()
+                                resolve({
+                                    'data': result
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+            else {
                 reject({
                     'data': 'No data found'
                 })
